@@ -4,6 +4,7 @@ from PIL.Image import Image
 from aggdraw import Draw, Pen
 from typing import Iterator, TypeAlias, Iterable
 from argparse import ArgumentParser
+from dataclasses import dataclass
 
 
 Point: TypeAlias = tuple[float, float]
@@ -20,15 +21,12 @@ class Hexagon:
         self._radius = radius
         self._center = center
 
-    def points(self) -> list[Point]:
-        def it():
-            x, y = self._center
-            for angle in range(0, 360, 60):
-                x += math.cos(math.radians(angle)) * self._radius
-                y += math.sin(math.radians(angle)) * self._radius
-                yield (x, y)
-
-        return list(it())
+    def points(self) -> Iterator[Point]:
+        x, y = self._center
+        for angle in range(0, 360, 60):
+            x += math.cos(math.radians(angle)) * self._radius
+            y += math.sin(math.radians(angle)) * self._radius
+            yield (x, y)
 
 
 def lines(points: list[Point]) -> list[tuple[Point, Point]]:
@@ -59,8 +57,7 @@ class Tiling:
         draw = Draw(img)
         row, col = (-1, 0)
         while True:
-            hexagon = self.hexagon(row, col)
-            points = hexagon.points()
+            points = list(self.hexagon(row, col).points())
             if row == -1:
                 draw.polygon(list(splice(points)), pen)
             else:
@@ -76,6 +73,22 @@ class Tiling:
         draw.flush()
 
 
+@dataclass
+class PaperSize:
+    width: float
+    height: float
+
+    def img(self, resolution: int) -> Image:
+        return image.new(
+            "RGB",
+            (int(self.width * resolution), int(self.height * resolution)),
+            "white",
+        )
+
+
+PAPER_SIZES = {"a4": PaperSize(8.3, 11.7)}
+
+
 def a4(resolution: int = 300) -> Image:
     return image.new("RGB", (int(8.3 * resolution), int(11.7 * resolution)), "white")
 
@@ -86,13 +99,14 @@ def create_parser() -> ArgumentParser:
     parser.add_argument("--radius", type=float, default=0.65)
     parser.add_argument("--width", "-w", type=int, default=3)
     parser.add_argument("--color", "-c", type=str, default="black")
+    parser.add_argument("-paper", "-p", choices=list(PAPER_SIZES.keys()), default="a4")
     return parser
 
 
 def main():
     args = create_parser().parse_args()
     tiling = Tiling(radius=args.radius * args.resolution)
-    img = a4(args.resolution)
+    img = PAPER_SIZES[args.paper].img(args.resolution)
     tiling.draw(img, Pen(args.color, args.width))
     img.show()
 
