@@ -99,7 +99,7 @@ def create_parser() -> ArgumentParser:
     parser.add_argument("--radius", type=float, default=0.65)
     parser.add_argument("--width", "-w", type=int, default=3)
     parser.add_argument("--color", "-c", type=str, default="black")
-    parser.add_argument("-paper", "-p", choices=list(PAPER_SIZES.keys()), default="a4")
+    parser.add_argument("--paper", "-p", choices=list(PAPER_SIZES.keys()), default="a4")
     return parser
 
 
