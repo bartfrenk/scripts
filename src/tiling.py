@@ -89,10 +89,6 @@ class PaperSize:
 PAPER_SIZES = {"a4": PaperSize(8.3, 11.7)}
 
 
-def a4(resolution: int = 300) -> Image:
-    return image.new("RGB", (int(8.3 * resolution), int(11.7 * resolution)), "white")
-
-
 def create_parser() -> ArgumentParser:
     parser = ArgumentParser()
     parser.add_argument("--resolution", type=int, default=300)
