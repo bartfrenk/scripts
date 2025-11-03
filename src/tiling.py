@@ -6,40 +6,6 @@ from typing import Iterator, TypeAlias, Iterable
 from argparse import ArgumentParser
 
 
-class HexagonGenerator(object):
-    """Returns a hexagon generator for hexagons of the specified size."""
-
-    def __init__(self, edge_length):
-        self.edge_length = edge_length
-
-    @property
-    def col_width(self):
-        return self.edge_length * 3
-
-    @property
-    def row_height(self):
-        return math.sin(math.pi / 3) * self.edge_length
-
-    def __call__(self, row, col):
-        x = (col + 0.5 * (row % 2)) * self.col_width
-        y = row * self.row_height
-        for angle in range(0, 360, 60):
-            x += math.cos(math.radians(angle)) * self.edge_length
-            y += math.sin(math.radians(angle)) * self.edge_length
-            yield x
-            yield y
-
-
-def hexagon_generator(edge_length, offset):
-    """Generator for coordinates in a hexagon."""
-    x, y = offset
-    for angle in range(0, 360, 60):
-        x += math.cos(math.radians(angle)) * edge_length
-        y += math.sin(math.radians(angle)) * edge_length
-        yield x
-        yield y
-
-
 Point: TypeAlias = tuple[float, float]
 
 
@@ -89,10 +55,9 @@ class Tiling:
     def hexagon(self, row: int, col: int) -> Hexagon:
         return Hexagon(self._radius, self.center(row, col))
 
-    def draw(self, img: Image) -> None:
+    def draw(self, img: Image, pen: Pen) -> None:
         draw = Draw(img)
         row, col = (-1, 0)
-        pen = Pen("black", 3)
         while True:
             hexagon = self.hexagon(row, col)
             points = hexagon.points()
@@ -119,6 +84,8 @@ def create_parser() -> ArgumentParser:
     parser = ArgumentParser()
     parser.add_argument("--resolution", type=int, default=300)
     parser.add_argument("--radius", type=float, default=0.65)
+    parser.add_argument("--width", "-w", type=int, default=3)
+    parser.add_argument("--color", "-c", type=str, default="black")
     return parser
 
 
@@ -126,7 +93,7 @@ def main():
     args = create_parser().parse_args()
     tiling = Tiling(radius=args.radius * args.resolution)
     img = a4(args.resolution)
-    tiling.draw(img)
+    tiling.draw(img, Pen(args.color, args.width))
     img.show()
 
 
