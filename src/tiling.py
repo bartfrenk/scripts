@@ -89,6 +89,7 @@ class Tiling:
         self._radius = radius
 
     def center(self, row: int, col: int) -> Point:
+        # TODO: Offset should be configurable
         x = 172 + (col + 0.5 * (row % 2)) * self._radius * 3
         y = 204 + row * math.sin(math.pi / 3) * self._radius
         return (x, y)
@@ -99,6 +100,7 @@ class Tiling:
     def draw(self, img: Image, pen: Pen, opacity: int = 255) -> None:
         print(opacity)
         SIZE = 84
+        # TODO: Should have the same color as the hexes
         font = Font("white", "/usr/local/share/fonts/ttf/hack/HackNerdFont-Bold.ttf", SIZE)
         draw = Draw(img)
         row, col = (-1, 0)
