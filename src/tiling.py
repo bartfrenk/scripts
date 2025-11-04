@@ -79,11 +79,8 @@ class PaperSize:
     height: float
 
     def img(self, resolution: int) -> Image:
-        return image.new(
-            "RGB",
-            (int(self.width * resolution), int(self.height * resolution)),
-            "white",
-        )
+        size = (int(self.width * resolution), int(self.height * resolution))
+        return image.new("RGB", size, "white")
 
 
 PAPER_SIZES = {"a4": PaperSize(8.3, 11.7)}

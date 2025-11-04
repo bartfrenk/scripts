@@ -9,3 +9,6 @@ dependencies = [
     "pillow>=12.0.0",
     "pydantic>=2.12.3",
 ]
+
+[tool.black]
+line-length = 99
