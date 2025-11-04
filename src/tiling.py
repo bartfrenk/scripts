@@ -90,7 +90,7 @@ def create_parser() -> ArgumentParser:
     parser = ArgumentParser()
     parser.add_argument("--resolution", type=int, default=300)
     parser.add_argument("--radius", type=float, default=0.65)
-    parser.add_argument("--width", "-w", type=int, default=3)
+    parser.add_argument("--stroke", "-s", type=int, default=3)
     parser.add_argument("--color", "-c", type=str, default="black")
     parser.add_argument("--paper", "-p", choices=list(PAPER_SIZES.keys()), default="a4")
     return parser
@@ -100,7 +100,7 @@ def main():
     args = create_parser().parse_args()
     tiling = Tiling(radius=args.radius * args.resolution)
     img = PAPER_SIZES[args.paper].img(args.resolution)
-    tiling.draw(img, Pen(args.color, args.width))
+    tiling.draw(img, Pen(args.color, args.stroke))
     img.show()
 
 
